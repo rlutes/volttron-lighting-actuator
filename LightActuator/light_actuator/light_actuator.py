@@ -105,7 +105,7 @@ class LightActuator(Agent):
         caller_identity = self.vip.rpc.context.vip_message.peer
         device_path, point_name = topic.rsplit('/', 1)
         device_points = self.device_list.get(device_path, [])
-
+        _log.debug(f'Call set_point: {topic}, {value}, {point} -- device_points: {device_points}')
         if not device_points:
             _log.warning(f"No points defined for device path: {device_path}")
             return True  # Indicate an error
@@ -147,7 +147,7 @@ class LightActuator(Agent):
         caller_identity = self.vip.rpc.context.vip_message.peer
         device_path, point_name = topic.rsplit('/', 1)
         device_points = self.device_list.get(device_path, [])
-
+        _log.debug(f'Call revert_point: {topic}, {point} -- device_points: {device_points}')
         if not device_points:
             _log.warning(f"No points defined for device path: {device_path}")
             return True  # Indicate an error
@@ -179,6 +179,7 @@ class LightActuator(Agent):
         """
         try:
             set_topic = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=device_path, point=point)
+            _log.debug(f'Call set_point: {caller_identity}, {device_path}, {point} -- set_topic: {set_topic} -- value: {value}')
             result = self.vip.rpc.call(self.actuator, "set_point", caller_identity, set_topic, value).get(timeout=30)
             return True
         except (RemoteError, gevent.Timeout) as ex:
@@ -202,6 +203,8 @@ class LightActuator(Agent):
         """
         try:
             set_topic = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=device_path, point=point)
+            _log.debug(
+                f'Call revert: {caller_identity}, {device_path}, {point} -- set_topic: {set_topic}')
             result = self.vip.rpc.call(self.actuator, "revert_point", caller_identity, set_topic).get(timeout=30)
             return True
         except (RemoteError, gevent.Timeout) as ex:
@@ -224,6 +227,7 @@ class LightActuator(Agent):
         device_path, point_name = topic.rsplit('/', 1)
         data = self.device_values.get(device_path, {}).values()
         data = [value for value in data if value is not None]
+        _log.debug(f"Call get_point: {topic} -- data: {data}")
         if data:
             try:
                 return sum(data) / len(data)
