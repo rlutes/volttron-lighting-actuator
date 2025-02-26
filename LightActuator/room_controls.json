@@ -1,0 +1,14 @@
+{
+  "campus/building/room1": [
+    "DimmableLight37_RequestedLevel",
+    "DimmableLight35_RequestedLevel",
+    "DimmableLight25_RequestedLevel",
+    "DimmableLight28_RequestedLevel",
+    "DimmableLight27_RequestedLevel"
+  ],
+  "campus/building/room2": [
+    "DimmableLight38_RequestedLevel",
+    "DimmableLight20_RequestedLevel",
+    "DimmableLight32_RequestedLevel"
+  ]
+}
