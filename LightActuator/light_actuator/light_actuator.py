@@ -45,7 +45,7 @@ class LightActuator(Agent):
         base_rpc_path = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=None, point=None)
 
         for device, point_list in self.device_list.items():
-            device_topic = base_device_topic(path=device, point="")
+            device_topic = base_device_topic(path=device)
             self.rpc_map[base_rpc_path(path=device)] = device_topic
             self.device_update[device_topic] = None
             self.device_values[device_topic] = {point: None for point in point_list}
