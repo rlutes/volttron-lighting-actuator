@@ -46,7 +46,7 @@ class LightActuator(Agent):
 
         for device, point_list in self.device_list.items():
             device_topic = base_device_topic(path=device)
-            self.rpc_map[base_rpc_path(path=device)] = device_topic
+            self.rpc_map[base_rpc_path(path=device, point=None)] = device_topic
             self.device_update[device_topic] = None
             self.device_values[device_topic] = {point: None for point in point_list}
             self.vip.pubsub.subscribe(peer="pubsub", prefix=device_topic, callback=self.new_data)
