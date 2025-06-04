@@ -103,7 +103,10 @@ class LightActuator(Agent):
           The function uses the provided requester's identity to ensure authorized access when setting points.
         """
         caller_identity = self.vip.rpc.context.vip_message.peer
-        device_path, point_name = topic.rsplit('/', 1)
+        if point is not None:
+            device_path, point_name = topic, point
+        else:
+            device_path, point_name = topic.rsplit('/', 1)
         device_points = self.device_list.get(device_path, [])
         _log.debug(f'Call set_point: {topic}, {value}, {point} -- device_points: {device_points}')
         if not device_points:
