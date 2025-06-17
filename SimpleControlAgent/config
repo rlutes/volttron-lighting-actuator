@@ -1,7 +1,7 @@
 {
     "control_list": [
         {
-            "actuator": "platform.driver",
+            "actuator": "platform.actuator",
             "device_list": [
                 "UCSD/CenterHall/AHU-3/VAV-15",
                 "UCSD/CenterHall/AHU-3/VAV-16",
@@ -53,7 +53,7 @@
                 "UCSD/CenterHall/AHU-7/VAV-8",
                 "UCSD/CenterHall/AHU-7/VAV-9"
             ],
-            "point_list": {
+            "point_dict": {
                 "CLGOCC-SP": null
             }
         },
@@ -140,7 +140,7 @@
                 "UCSD/CenterHall/303_lights",
                 "UCSD/CenterHall/302_lights"
             ],
-            "point_list": {
+            "point_dict": {
                 "Dimming": null
             }
         }

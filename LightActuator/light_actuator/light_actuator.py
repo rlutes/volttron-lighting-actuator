@@ -42,11 +42,11 @@ class LightActuator(Agent):
           - Subscribes to the device topic on the pubsub system and associates it with the callback method new_data.
         """
         base_device_topic = topics.DEVICES_VALUE(campus="", building="", unit="", path=None, point="all")
-        base_rpc_path = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=None, point=None)
+        base_rpc_path = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=None, point="")
 
         for device, point_list in self.device_list.items():
             device_topic = base_device_topic(path=device)
-            self.rpc_map[base_rpc_path(path=device, point=None)] = device_topic
+            self.rpc_map[base_rpc_path(path=device)] = device_topic
             self.device_update[device_topic] = None
             self.device_values[device_topic] = {point: None for point in point_list}
             self.vip.pubsub.subscribe(peer="pubsub", prefix=device_topic, callback=self.new_data)
@@ -184,6 +184,7 @@ class LightActuator(Agent):
             set_topic = topics.RPC_DEVICE_PATH(campus="", building="", unit="", path=device_path, point=point)
             _log.debug(f'Call set_point: {caller_identity}, {device_path}, {point} -- set_topic: {set_topic} -- value: {value}')
             result = self.vip.rpc.call(self.actuator, "set_point", caller_identity, set_topic, value).get(timeout=30)
+            gevent.sleep(0.3)
             return True
         except (RemoteError, gevent.Timeout) as ex:
             _log.error(f"Failed to set {point} on {device_path}: {ex}")
@@ -215,7 +216,7 @@ class LightActuator(Agent):
             return False
 
     @RPC.export
-    def get_point(self, requester_id, topic, **kwargs):
+    def get_point(self, topic, **kwargs):
         """
         This method retrieves the average value of a specific point under a given device path.
 
@@ -227,10 +228,12 @@ class LightActuator(Agent):
         Returns:
             The average of all non-None point values in the given device path if such values exist, otherwise None.
         """
-        device_path, point_name = topic.rsplit('/', 1)
+        _log.debug(f"Call get_point RPC map: {self.rpc_map}")
+        rpc_path, point_name = topic.rsplit('/', 1)
+        device_path = self.rpc_map.get(rpc_path, "")
         data = self.device_values.get(device_path, {}).values()
         data = [value for value in data if value is not None]
-        _log.debug(f"Call get_point: {topic} -- data: {data}")
+        _log.debug(f"Call get_point: {device_path} -- data: {data}")
         if data:
             try:
                 return sum(data) / len(data)
